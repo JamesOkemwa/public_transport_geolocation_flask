@@ -8,18 +8,31 @@
 <body>
     <h1>Munster Public Transport</h1>
 
+    <!-- Search bar section -->
+    <div>
+        <input type="text" id="search" placeholder="Search for a place or address">
+        <button onclick="searchLocation()">Search</button>
+    </div>
+
     <div id="map-container">
         {{ folium_map | safe }}
     </div>
 
     <script>
-        function updateMap(response) {
-            if (response.message === 'User location updated successfully') {
-                // Update the map with the new HTML structure
-                document.getElementById('map-container').innerHTML = response.updated_map_html;
-            } else {
-                console.error('Error updating user location:', response.message);
-            }
+
+        // Function to search for a location
+        function searchLocation() {
+            var searchInput = document.getElementById('search').value;
+            // send the search parameter to the Flask backend
+            fetch('/search_destination', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    search_param: searchInput
+                })
+            })
         }
 
         // Function to get user's geolocation
@@ -38,10 +51,19 @@
                         })
                     })
                     .then(response => response.json())
-                    .then(data => updateMap(data));
+                    .then(data => updateMap(data))
                 });
             } else {
                 console.error('An error occured when fetching the location');
+            }
+        }
+
+        // Function to update the map with new HTML structure
+        function updateMap(response) {
+            if (response.message === 'User location updated successfully') {
+                document.getElementById('map-container').innerHTML = response.updated_map_html;
+            } else {
+                console.error('Error updating user location:', response.message);
             }
         }
 

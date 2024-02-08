@@ -47,5 +47,14 @@ def update_user_location():
 
     return jsonify({'message': 'User location updated successfully', 'updated_map_html': updated_map_html})
 
+@app.route('/search_destination', methods=['POST'])
+def search_destination():
+    """
+    Receives the search parameter from the search bar on the map
+    """
+    data = request.get_json()
+    search_param = data.get('search_param')
+    return jsonify({'message': 'Search parameter received', 'search_param': search_param})
+
 if __name__ == '__main__':
     app.run(debug=True)
