@@ -1,6 +1,6 @@
 import folium
 from folium.plugins import MarkerCluster
-from flask import Flask, render_template
+from flask import Flask, render_template, request, jsonify
 from utility.helpers import read_gtfs_data
 
 app = Flask(__name__)
@@ -27,10 +27,21 @@ def index():
 
     marker_cluster.add_to(munster_map)
 
-    map_file_path = 'templates/map.html'
-    munster_map.save(map_file_path)
 
-    return render_template('map.html')
+    return render_template('map.html', folium_map=munster_map._repr_html_())
+
+@app.route('/update_user_location', methods=['POST'])
+def update_user_location():
+    """
+    Receives the user location coordinates from the browser
+    """
+    data = request.get_json()
+    latitude = data.get('latitude')
+    longitude = data.get('longitude')
+
+    print("lat:", latitude, "long:",longitude)
+
+    return jsonify({'message': 'User location updated successfully'})
 
 if __name__ == '__main__':
     app.run(debug=True)
