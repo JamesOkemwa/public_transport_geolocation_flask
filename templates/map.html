@@ -4,12 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Munster Public Transport Application</title>
-    {{ folium_map | safe }}
 </head>
 <body>
-    <h1>Munster Bus Stops</h1>
+    <h1>Munster Public Transport</h1>
+
+    <div id="map-container">
+        {{ folium_map | safe }}
+    </div>
 
     <script>
+        function updateMap(response) {
+            if (response.message === 'User location updated successfully') {
+                // Update the map with the new HTML structure
+                document.getElementById('map-container').innerHTML = response.updated_map_html;
+            } else {
+                console.error('Error updating user location:', response.message);
+            }
+        }
+
         // Function to get user's geolocation
         function getUserLocation() {
             if (navigator.geolocation) {
@@ -24,14 +36,16 @@
                             latitude: position.coords.latitude,
                             longitude: position.coords.longitude
                         })
-                    });
+                    })
+                    .then(response => response.json())
+                    .then(data => updateMap(data));
                 });
             } else {
                 console.error('An error occured when fetching the location');
             }
         }
 
-        // Call the function when the page loads
+        // Get the user location when the page loads
         window.onload = getUserLocation;
     </script>
 </body>
