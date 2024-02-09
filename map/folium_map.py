@@ -5,13 +5,14 @@ from utility.helpers import read_gtfs_data
 
 class FoliumMapManager:
     """
-    Used to create a folium map instance that is accessible in the wole application
+    Used to create a folium map instance that is accessible in the whole application
     """
 
     def __init__(self):
         self.munster_coordinates = [51.96, 7.62]
         self.map_instance = None
         self.user_location_marker = None
+        self.destination_marker = None
 
     def create_map(self):
         """
@@ -46,6 +47,15 @@ class FoliumMapManager:
 
         self.user_location_marker = folium.Marker(location=[lat, long], popup='You are here', icon=folium.Icon(color='red'))
         self.user_location_marker.add_to(self.map_instance)
+
+    def add_destination_marker(self, lat, long):
+        """
+        Received the latitude and longitude of the destination and adds it to the map
+        """
+        # if self.destination_marker is not None:
+        #     self.clear_map()
+        self.destination_marker = folium.Marker(location=[lat, long], popup='Destination bus stop', icon=folium.Icon(color='green'))
+        self.destination_marker.add_to(self.map_instance)
 
     def clear_map(self):
         """

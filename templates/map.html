@@ -33,6 +33,8 @@
                     search_param: searchInput
                 })
             })
+            .then(response => response.json())
+            .then(data => updateMap(data))
         }
 
         // Function to get user's geolocation
@@ -60,10 +62,10 @@
 
         // Function to update the map with new HTML structure
         function updateMap(response) {
-            if (response.message === 'User location updated successfully') {
+            if (response.updated_map_html) {
                 document.getElementById('map-container').innerHTML = response.updated_map_html;
             } else {
-                console.error('Error updating user location:', response.message);
+                console.error('An error occured', response.message);
             }
         }
 

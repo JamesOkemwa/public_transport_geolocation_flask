@@ -1,7 +1,7 @@
 import folium
 from flask import Flask, render_template, request, jsonify
 from map.folium_map import FoliumMapManager
-from utility.helpers import read_gtfs_data
+from utility.helpers import read_gtfs_data, geocode_location
 
 app = Flask(__name__)
 
@@ -29,11 +29,18 @@ def update_user_location():
 @app.route('/search_destination', methods=['POST'])
 def search_destination():
     """
-    Receives the search parameter from the search bar on the map
+    Receives the search parameter from the search bar on the map, geocodes it adds the location on the map
     """
     data = request.get_json()
     search_param = data.get('search_param')
-    return jsonify({'message': 'Search parameter received', 'search_param': search_param})
+
+    destination_coords = geocode_location(search_param)
+
+    # add a marker for the destination on the map
+    if destination_coords:
+        map_manager.add_destination_marker(destination_coords.get('latitude'), destination_coords.get('longitude'))
+    
+    return jsonify({'message': 'Search parameter received', 'updated_map_html': map_manager.get_map_html()})
 
 if __name__ == '__main__':
     app.run(debug=True)
