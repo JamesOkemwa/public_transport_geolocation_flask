@@ -22,13 +22,9 @@ def update_user_location():
     longitude = data.get('longitude')
 
     # Add a marker for the user's location
-    user_location_marker = folium.Marker(location=[latitude, longitude], popup='You are here', icon=folium.Icon(color='red'))
-    user_location_marker.add_to(munster_map)
-    munster_map.position = [latitude, longitude]
+    map_manager.add_user_location_marker(latitude, longitude)
 
-    updated_map_html = munster_map._repr_html_()
-
-    return jsonify({'message': 'User location updated successfully', 'updated_map_html': updated_map_html})
+    return jsonify({'message': 'User location updated successfully', 'updated_map_html': map_manager.get_map_html()})
 
 @app.route('/search_destination', methods=['POST'])
 def search_destination():

@@ -11,6 +11,7 @@ class FoliumMapManager:
     def __init__(self):
         self.munster_coordinates = [51.96, 7.62]
         self.map_instance = None
+        self.user_location_marker = None
 
     def create_map(self):
         """
@@ -35,3 +36,26 @@ class FoliumMapManager:
             marker_cluster.add_to(self.map_instance)
 
         return self.map_instance
+    
+    def add_user_location_marker(self, lat, long):
+        """
+        Takes the latitude and longitude of the user location as parameters and adds a marker at that location on the map
+        """
+        if self.user_location_marker is not None:
+            self.clear_map()
+
+        self.user_location_marker = folium.Marker(location=[lat, long], popup='You are here', icon=folium.Icon(color='red'))
+        self.user_location_marker.add_to(self.map_instance)
+
+    def clear_map(self):
+        """
+        Clear all markers on the map
+        """
+        if self.map_instance is not None:
+            self.map_instance = self.create_map()
+
+    def get_map_html(self):
+        """
+        Returns the html represenation of the updated map instance
+        """
+        return self.map_instance._repr_html_()
